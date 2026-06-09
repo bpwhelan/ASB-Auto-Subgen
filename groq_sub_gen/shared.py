@@ -92,8 +92,9 @@ class Config:
     skip_language_check: bool = False
     # path_to_watch: str = "./watch"
     cookies: str = ""
+    use_video_title: bool = False
 
-    def __init__(self, process_locally=False, GROQ_API_KEY="", whisper_model="turbo", RUN_ASB_WEBSOCKET_SERVER=True, model="whisper-large-v3-turbo", output_dir="output", language="ja", skip_language_check=False, path_to_watch="./watch", cookies="", *args, **kwargs):
+    def __init__(self, process_locally=False, GROQ_API_KEY="", whisper_model="turbo", RUN_ASB_WEBSOCKET_SERVER=True, model="whisper-large-v3-turbo", output_dir="output", language="ja", skip_language_check=False, path_to_watch="./watch", cookies="", *args, use_video_title=False, **kwargs):
         self.process_locally = process_locally
         self.GROQ_API_KEY = GROQ_API_KEY
         self.whisper_model = whisper_model
@@ -104,6 +105,7 @@ class Config:
         self.skip_language_check = skip_language_check
         # self.path_to_watch = path_to_watch
         self.cookies = cookies
+        self.use_video_title = use_video_title
 
 
 def parse_config(file_path):
@@ -129,11 +131,14 @@ def download_audio(youtube_url, output_dir="."):
         with yt_dlp.YoutubeDL({'quiet': True, 'verbose': False, 'skip_download': True}) as ydl:
             info_dict_pre = ydl.extract_info(youtube_url, download=False)
             video_id = info_dict_pre.get('id', 'youtube_audio')
-            base_filename = os.path.join(output_dir, video_id)
+            video_title = info_dict_pre.get('title', 'youtube_audio')
+            filename_stem = video_title if config.use_video_title else video_id
+            base_filename = os.path.join(output_dir, filename_stem)
             logging.info(f"Video ID detected: {video_id}")
+            logging.info(f"Video title detected: {video_title}")
     except Exception as e:
         logging.warning(
-            f"Could not pre-extract video ID, using default filename: {e}")
+            f"Could not pre-extract video info, using default filename: {e}")
         base_filename = os.path.join(output_dir, "youtube_audio")
 
     ydl_opts = {
