@@ -77,6 +77,7 @@ This will be generated on first run if it doesn't exist (idk where).
    language: "ja"
    skip_language_check: false
    cookies: ""
+   use_video_title: false
    ```
 3. Save the file.
 
@@ -91,6 +92,7 @@ This will be generated on first run if it doesn't exist (idk where).
 - `language`: Language code for transcription. Also used to check if the video's language is what we want.
 - `skip_language_check`: When `true`, bypasses YouTube metadata language validation entirely.
 - `cookies`: Cookies for authenticated yt-dlp requests.
+- `use_video_title`: Use the video's title as the local output filename instead of the video ID.
 
 ## Setup API Usage
 
